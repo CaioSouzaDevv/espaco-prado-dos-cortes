@@ -32,3 +32,17 @@ export const UserLoginResponseSchema = {
     token: { type: "string" }
   }
 } as const;
+
+export const forgotPasswordSchema = {
+  type: "object",
+  properties: {
+    email: { type: "string", format: "email" },
+  }
+} as const;
+
+export const forgotPasswordResponseSchema = {
+  type: "object",
+  properties: {
+    message: { type: "string" },
+  }
+} as const;

@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { UserService } from "../services/users.service";
-import { userCreateDTO, userLoginDTO } from "../dtos/users.dto";
+import { forgotPasswordDTO, userCreateDTO, userLoginDTO } from "../dtos/users.dto";
 
 const userService = new UserService();
 
@@ -19,6 +19,16 @@ export class UserController {
     try {
       const token = await userService.userLogin(req.body);
       return res.status(200).send({ token })
+    } catch (err) {
+      const status = err.status || 400;
+      return res.status(status).send({ error: err.message });
+    }
+  }
+
+  static async forgotPassword(req: FastifyRequest<{ Body: forgotPasswordDTO }>, res: FastifyReply) {
+    try {
+      await userService.forgotPassword(req.body)
+      return res.status(200).send({ message: "If an account with this email exists, a password reset link will be sent." })
     } catch (err) {
       const status = err.status || 400;
       return res.status(status).send({ error: err.message });
