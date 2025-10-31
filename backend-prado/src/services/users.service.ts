@@ -1,7 +1,8 @@
 import { AppDataSource } from "../data-source";
-import { userCreateDTO } from "../dtos/users.dto";
+import { userCreateDTO, userLoginDTO } from "../dtos/users.dto";
 import { User } from "../entity/User";
-import * as bcrypt from "bcrypt"
+import * as bcrypt from "bcrypt";
+import * as jwt from "jsonwebtoken";
 
 export class UserService {
   private userRepo = AppDataSource.getRepository(User);
@@ -20,5 +21,27 @@ export class UserService {
     await this.userRepo.save(user);
 
     return user
+  }
+
+  async userLogin(data: userLoginDTO) {
+    const { email, password } = data;
+
+    const user = await this.userRepo.findOneBy({ email });
+    if (!user) {
+      throw { status: 404, message: "Invalid credentials" };
+    }
+
+    const isMatchPassword = await bcrypt.compare(password, user.passwordHash);
+    if (!isMatchPassword) {
+      throw { status: 404, message: "Invalid credentials" };
+    }
+
+    const payload = {
+      id: user.id,
+      name: user.name
+    }
+
+    const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
+    return token;
   }
 }

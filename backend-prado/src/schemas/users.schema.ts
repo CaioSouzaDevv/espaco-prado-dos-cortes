@@ -1,3 +1,5 @@
+import { format } from "path";
+
 export const UserCreateSchema = {
   type: "object",
   required: ["name", "email", "password"],
@@ -14,4 +16,19 @@ export const UserResponseSchema = {
     email: { type: "string", format: "email" },
     name: { type: "string" },
   },
+} as const;
+
+export const UserLoginSchema = {
+  type: "object",
+  properties: {
+    email: { type: "string", format: "email" },
+    password: { type: "string" },
+  }
+} as const;
+
+export const UserLoginResponseSchema = {
+  type: "object",
+  properties: {
+    token: { type: "string" }
+  }
 } as const;

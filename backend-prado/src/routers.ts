@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { UserController } from "./controllers/users.controller"
-import { userCreateDTO } from "./dtos/users.dto";
-import { UserCreateSchema, UserResponseSchema } from "./schemas/users.schema";
+import { userCreateDTO, userLoginDTO } from "./dtos/users.dto";
+import { UserCreateSchema, UserLoginResponseSchema, UserLoginSchema, UserResponseSchema } from "./schemas/users.schema";
 
 export async function Routers(fastify: FastifyInstance) {
   fastify.post<{ Body: userCreateDTO }>("/auth/register", {
@@ -11,5 +11,14 @@ export async function Routers(fastify: FastifyInstance) {
         201: UserResponseSchema,
       }
     }
-  }, UserController.userCreate)
+  }, UserController.userCreate);
+
+  fastify.post<{ Body: userLoginDTO }>("/auth/login", {
+    schema: {
+      body: UserLoginSchema,
+      response: {
+        200: UserLoginResponseSchema,
+      }
+    }
+  }, UserController.userLogin)
 }
