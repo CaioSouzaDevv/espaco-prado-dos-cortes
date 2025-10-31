@@ -1,0 +1,29 @@
+- [ ] **Autenticação**
+    - [ ] Login de usuário
+    - [ ] Reset de token
+- [ ] **Controle de Clientes**
+    - [ ] Cadastrar clientes (nome, telefone)
+    - [ ] Manter histórico de cortes/serviços por cliente
+- [ ] **Gerenciamento de Serviços**
+    - [ ] Adicionar serviços e preços
+    - [ ] Editar serviços e preços
+    - [ ] Remover serviços
+- [ ] **Agendamento de Clientes**
+    - [ ] Criar agendamentos
+    - [ ] Editar agendamentos
+    - [ ] Cancelar agendamentos
+- [ ] **Visualização de Agenda**
+    - [ ] Criar um calendário para visualização de horários
+    - [ ] Exibir horários ocupados
+    - [ ] Exibir horários livres
+    - [ ] Visualização por dia
+    - [ ] Visualização por semana
+    - [ ] Visualização por mês
+- [ ] **Notas Rápidas**
+    - [ ] Adicionar observações sobre clientes
+    - [ ] Adicionar observações sobre horários
+- [ ] **Relatórios Simples**
+    - [ ] Relatório de receita diária
+    - [ ] Relatório de receita semanal
+    - [ ] Relatório de receita mensal
+    - [ ] Relatório de serviços mais realizados
