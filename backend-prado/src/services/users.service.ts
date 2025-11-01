@@ -1,10 +1,11 @@
 import { AppDataSource } from "../data-source";
-import { forgotPasswordDTO, userCreateDTO, userLoginDTO } from "../dtos/users.dto";
+import { forgotPasswordDTO, resetPasswordBodyDTO, resetPasswordDTO, resetPasswordParamsDTO, userCreateDTO, userLoginDTO } from "../dtos/users.dto";
 import { User } from "../entity/User";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import * as crypto from "crypto";
 import * as nodemailer from "nodemailer";
+import { IsNull, Not } from "typeorm";
 
 export class UserService {
   private userRepo = AppDataSource.getRepository(User);
@@ -56,11 +57,12 @@ export class UserService {
       return;
     }
 
-    user.resetToken = crypto.randomBytes(32).toString("hex");
+    const token = crypto.randomBytes(32).toString("hex");
+    user.resetToken = token;
     user.expiresAt = new Date(Date.now() + 60 * 60 * 1000);
     await this.userRepo.save(user);
 
-    const resetLink = `http://localhost:8000/reset-password?token=${user.resetToken}`;
+    const resetLink = `http://localhost:8000/auth/reset-password/${token}`;
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -73,24 +75,45 @@ export class UserService {
     });
 
     try {
-      const info = await transporter.sendMail({
-        from: `"Espaço Prado" <${process.env.SMTP_USER}>`,
+      await transporter.sendMail({
+        from: `"Espaço Prado" < ${process.env.SMTP_USER}> `,
         to: email,
         subject: "Recuperação de Senha",
         html: `
-      <h1>Recuperação de Senha</h1>
-      <p>Você solicitou a recuperação de senha.</p>
-      <p>Clique no link abaixo para redefinir sua senha:</p>
-      <a href="${resetLink}">Redefinir Senha</a>
-      <p>Este link expira em 1 hora.</p>
-      <p>Se você não solicitou isso, ignore este email.</p>
-    `,
+      <h1> Recuperação de Senha </h1>
+      <p> Você solicitou a recuperação de senha.</p>
+      <p> Clique no link abaixo para redefinir sua senha: </p>
+      <a href = "${resetLink}" > Redefinir Senha </a>
+      <p> Este link expira em 1 hora.</p>
+      <p> Se você não solicitou isso, ignore este email.</p>
+      `,
       });
-      console.log(info);
 
       return;
     } catch (err) {
       throw { error: 500, message: "Erro ao enviar codigo, tente novamente mais tarde." }
     }
   }
-}
+
+  async resetPassword(dataParams: resetPasswordParamsDTO, dataBody: resetPasswordBodyDTO) {
+    const { token } = dataParams;
+    const { password } = dataBody;
+
+    const user = await this.userRepo.findOne({ where: { resetToken: token } });
+
+    if (!user || !user.expiresAt || user.expiresAt < new Date()) {
+      throw { status: 400, message: "Token is invalid or has expired." };
+    }
+
+    const isMatchPassword = await bcrypt.compare(password, user.passwordHash);
+    if (isMatchPassword) {
+      throw { status: 409, message: "The new password cannot be the same as the current password." };
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    user.passwordHash = passwordHash;
+    user.resetToken = null;
+    user.expiresAt = null;
+    await this.userRepo.save(user);
+  }
+} 

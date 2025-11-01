@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { UserController } from "./controllers/users.controller"
-import { forgotPasswordDTO, userCreateDTO, userLoginDTO } from "./dtos/users.dto";
-import { forgotPasswordResponseSchema, forgotPasswordSchema, UserCreateSchema, UserLoginResponseSchema, UserLoginSchema, UserResponseSchema } from "./schemas/users.schema";
+import { forgotPasswordDTO, resetPasswordBodyDTO, resetPasswordDTO, resetPasswordParamsDTO, userCreateDTO, userLoginDTO } from "./dtos/users.dto";
+import { forgotPasswordResponseSchema, forgotPasswordSchema, resetPasswordBodySchema, resetPasswordParamSchema, resetPasswordResponseSchema, UserCreateSchema, UserLoginResponseSchema, UserLoginSchema, UserResponseSchema } from "./schemas/users.schema";
 
 export async function Routers(fastify: FastifyInstance) {
   fastify.post<{ Body: userCreateDTO }>("/auth/register", {
@@ -30,4 +30,14 @@ export async function Routers(fastify: FastifyInstance) {
       }
     }
   }, UserController.forgotPassword)
+
+  fastify.post<{ Params: resetPasswordParamsDTO, Body: resetPasswordBodyDTO }>("/auth/reset-password/:token", {
+    schema: {
+      params: resetPasswordParamSchema,
+      body: resetPasswordBodySchema,
+      response: {
+        200: resetPasswordResponseSchema,
+      }
+    }
+  }, UserController.resetPassword)
 }

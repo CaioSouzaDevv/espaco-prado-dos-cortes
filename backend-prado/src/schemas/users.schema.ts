@@ -1,5 +1,3 @@
-import { format } from "path";
-
 export const UserCreateSchema = {
   type: "object",
   required: ["name", "email", "password"],
@@ -41,6 +39,30 @@ export const forgotPasswordSchema = {
 } as const;
 
 export const forgotPasswordResponseSchema = {
+  type: "object",
+  properties: {
+    message: { type: "string" },
+  }
+} as const;
+
+export const resetPasswordParamSchema = {
+  type: "object",
+  properties: {
+    token: { type: "string" },
+  },
+  required: ["token"]
+} as const;
+
+
+export const resetPasswordBodySchema = {
+  type: "object",
+  properties: {
+    password: { type: "string", minLength: 8 },
+  },
+  required: ["password"]
+} as const;
+
+export const resetPasswordResponseSchema = {
   type: "object",
   properties: {
     message: { type: "string" },
