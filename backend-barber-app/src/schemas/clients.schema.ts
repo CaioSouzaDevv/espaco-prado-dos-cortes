@@ -1,4 +1,3 @@
-
 export const ClientCreateSchema = {
   type: "object",
   required: ["name", "phone"],

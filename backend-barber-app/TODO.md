@@ -2,7 +2,7 @@
     - [x] Login de usuário
     - [x] Reset de token
 - [ ] **Controle de Clientes**
-    - [ ] Cadastrar clientes (nome, telefone)
+    - [x] Cadastrar clientes (nome, telefone)
     - [ ] Manter histórico de cortes/serviços por cliente
 - [ ] **Gerenciamento de Serviços**
     - [ ] Adicionar serviços e preços
