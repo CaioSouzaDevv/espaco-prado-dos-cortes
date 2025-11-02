@@ -2,7 +2,8 @@ import "reflect-metadata";
 import { AppDataSource } from "./data-source";
 import fastify from "fastify";
 import cors from "@fastify/cors";
-import { Routers } from "./routers";
+import { userRouter } from "./routers/users.router";
+import { clientRouter } from "./routers/clients.router";
 
 const app = fastify({ logger: true });
 
@@ -11,7 +12,8 @@ AppDataSource.initialize()
     console.log("Conectado ao banco!");
 
     app.register(cors, {});
-    app.register(Routers);
+    app.register(userRouter);
+    app.register(clientRouter);
 
     await app.listen({ port: 8000 });
     console.log("Server started at http://localhost:8000");

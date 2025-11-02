@@ -1,16 +1,15 @@
 import { AppDataSource } from "../data-source";
-import { forgotPasswordDTO, resetPasswordBodyDTO, resetPasswordDTO, resetPasswordParamsDTO, userCreateDTO, userLoginDTO } from "../dtos/users.dto";
+import { forgotPasswordDTO, resetPasswordBodyDTO, resetPasswordParamsDTO, userCreateDTO, userLoginDTO } from "../dtos/users.dto";
 import { User } from "../entity/User";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import * as crypto from "crypto";
 import * as nodemailer from "nodemailer";
-import { IsNull, Not } from "typeorm";
 
 export class UserService {
   private userRepo = AppDataSource.getRepository(User);
 
-  async userCreate(data: userCreateDTO) {
+  async userCreate(data: userCreateDTO): Promise<User> {
     const { name, email, password } = data;
 
     const existingEmail = await this.userRepo.findOneBy({ email });
@@ -26,7 +25,7 @@ export class UserService {
     return user
   }
 
-  async userLogin(data: userLoginDTO) {
+  async userLogin(data: userLoginDTO): Promise<string> {
     const { email, password } = data;
 
     const user = await this.userRepo.findOneBy({ email });
@@ -48,7 +47,7 @@ export class UserService {
     return token;
   }
 
-  async forgotPassword(data: forgotPasswordDTO) {
+  async forgotPassword(data: forgotPasswordDTO): Promise<void> {
     const { email } = data;
     console.log(email);
 
@@ -91,11 +90,11 @@ export class UserService {
 
       return;
     } catch (err) {
-      throw { error: 500, message: "Erro ao enviar codigo, tente novamente mais tarde." }
+      throw { error: 500, message: "Error sending code. Please try again later." }
     }
   }
 
-  async resetPassword(dataParams: resetPasswordParamsDTO, dataBody: resetPasswordBodyDTO) {
+  async resetPassword(dataParams: resetPasswordParamsDTO, dataBody: resetPasswordBodyDTO): Promise<void> {
     const { token } = dataParams;
     const { password } = dataBody;
 
@@ -115,5 +114,7 @@ export class UserService {
     user.resetToken = null;
     user.expiresAt = null;
     await this.userRepo.save(user);
+
+    return;
   }
 } 

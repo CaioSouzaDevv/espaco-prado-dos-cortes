@@ -1,6 +1,6 @@
-- [ ] **Autenticação**
-    - [ ] Login de usuário
-    - [ ] Reset de token
+- [x] **Autenticação**
+    - [x] Login de usuário
+    - [x] Reset de token
 - [ ] **Controle de Clientes**
     - [ ] Cadastrar clientes (nome, telefone)
     - [ ] Manter histórico de cortes/serviços por cliente
