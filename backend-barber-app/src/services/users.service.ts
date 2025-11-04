@@ -5,12 +5,14 @@ import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import * as crypto from "crypto";
 import * as nodemailer from "nodemailer";
+import { Barbershop } from "../entity/Barbershop";
 
 export class UserService {
   private userRepo = AppDataSource.getRepository(User);
+  private barbershopRepo = AppDataSource.getRepository(Barbershop);
 
   async userCreate(data: userCreateDTO): Promise<User> {
-    const { name, email, password } = data;
+    const { name, email, password, role, barbershopId } = data;
 
     const existingEmail = await this.userRepo.findOneBy({ email });
     if (existingEmail) {
@@ -19,7 +21,15 @@ export class UserService {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const user = this.userRepo.create({ name, email, passwordHash });
+    let barbershop = null;
+    if (barbershopId) {
+      barbershop = await this.barbershopRepo.findOneBy({ id: barbershopId });
+      if (!barbershop) {
+        throw { status: 404, message: "Barbershop not found" };
+      }
+    }
+
+    const user = this.userRepo.create({ name, email, passwordHash, role, barbershop });
     await this.userRepo.save(user);
 
     return user

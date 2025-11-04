@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
+import { Barbershop } from "./Barbershop";
+import { Appointment } from "./Appointment";
+import { Client } from "./Client";
+
+export enum UserRole {
+  CUSTOMER = "customer",
+  BARBER = "barber",
+  ADMIN = "admin",
+}
 
 @Entity("users")
 export class User {
@@ -19,4 +28,20 @@ export class User {
 
   @Column({ type: "timestamp", nullable: true })
   expiresAt: Date | null;
+
+  @Column({
+    type: "enum",
+    enum: UserRole,
+    default: UserRole.CUSTOMER,
+  })
+  role: UserRole;
+
+  @ManyToOne(() => Barbershop, barbershop => barbershop.barbers, { nullable: true })
+  barbershop: Barbershop | null;
+
+  @OneToMany(() => Appointment, appointment => appointment.user)
+  appointments: Appointment[];
+
+  @OneToMany(() => Client, client => client.barber)
+  clients: Client[];
 }

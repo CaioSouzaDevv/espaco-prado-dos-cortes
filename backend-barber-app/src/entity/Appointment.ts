@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { Client } from "./Client";
 import { Service } from "./Service";
+import { User } from "./User";
 
 export enum AppointmentStatus {
   SCHEDULED = "scheduled",
@@ -13,8 +14,11 @@ export class Appointment {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => Client, client => client.appointments)
-  client: Client;
+  @ManyToOne(() => Client, { nullable: true })
+  client: Client | null;
+
+  @ManyToOne(() => User, user => user.appointments, { nullable: true })
+  user: User | null;
 
   @ManyToOne(() => Service, service => service.appointments)
   service: Service;

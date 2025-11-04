@@ -1,3 +1,5 @@
+import { UserRole } from "../entity/User";
+
 export const UserCreateSchema = {
   type: "object",
   required: ["name", "email", "password"],
@@ -5,6 +7,8 @@ export const UserCreateSchema = {
     email: { type: "string", format: "email" },
     password: { type: "string", minLength: 8 },
     name: { type: "string" },
+    role: { type: "string", enum: Object.values(UserRole) },
+    barbershopId: { type: "string" },
   },
 } as const;
 

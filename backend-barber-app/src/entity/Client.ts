@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { Appointment } from "./Appointment";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { User } from "./User";
 
 @Entity("clients")
 export class Client {
@@ -12,6 +12,6 @@ export class Client {
   @Column({ type: "varchar", length: 20 })
   phone: string;
 
-  @OneToMany(() => Appointment, appointment => appointment.client)
-  appointments: Appointment[];
+  @ManyToOne(() => User, user => user.clients)
+  barber: User;
 }
