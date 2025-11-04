@@ -4,6 +4,7 @@ import fastify from "fastify";
 import cors from "@fastify/cors";
 import { userRouter } from "./routers/users.router";
 import { clientRouter } from "./routers/clients.router";
+import { joinRequestsRouter } from "./routers/join-requests.router";
 
 const app = fastify({ logger: true });
 
@@ -14,6 +15,7 @@ AppDataSource.initialize()
     app.register(cors, {});
     app.register(userRouter);
     app.register(clientRouter);
+    app.register(joinRequestsRouter);
 
     await app.listen({ port: 8000 });
     console.log("Server started at http://localhost:8000");

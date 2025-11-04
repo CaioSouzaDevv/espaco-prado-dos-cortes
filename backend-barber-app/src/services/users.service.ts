@@ -12,7 +12,7 @@ export class UserService {
   private barbershopRepo = AppDataSource.getRepository(Barbershop);
 
   async userCreate(data: userCreateDTO): Promise<User> {
-    const { name, email, password, role, barbershopId } = data;
+    const { name, email, password, role } = data;
 
     const existingEmail = await this.userRepo.findOneBy({ email });
     if (existingEmail) {
@@ -21,15 +21,7 @@ export class UserService {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    let barbershop = null;
-    if (barbershopId) {
-      barbershop = await this.barbershopRepo.findOneBy({ id: barbershopId });
-      if (!barbershop) {
-        throw { status: 404, message: "Barbershop not found" };
-      }
-    }
-
-    const user = this.userRepo.create({ name, email, passwordHash, role, barbershop });
+    const user = this.userRepo.create({ name, email, passwordHash, role });
     await this.userRepo.save(user);
 
     return user

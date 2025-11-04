@@ -9,6 +9,12 @@ export enum UserRole {
   ADMIN = "admin",
 }
 
+export enum JoinRequestStatus {
+  PENDING = "pending",
+  APPROVED = "approved",
+  REJECTED = "rejected",
+}
+
 @Entity("users")
 export class User {
   @PrimaryGeneratedColumn("uuid")
@@ -35,6 +41,16 @@ export class User {
     default: UserRole.CUSTOMER,
   })
   role: UserRole;
+
+  @Column({
+    type: "enum",
+    enum: JoinRequestStatus,
+    nullable: true,
+  })
+  joinRequestStatus: JoinRequestStatus | null;
+
+  @ManyToOne(() => Barbershop, { nullable: true })
+  requestedBarbershop: Barbershop | null;
 
   @ManyToOne(() => Barbershop, barbershop => barbershop.barbers, { nullable: true })
   barbershop: Barbershop | null;

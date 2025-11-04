@@ -4,8 +4,7 @@ export interface userCreateDTO {
   name: string,
   email: string,
   password: string
-  role?: UserRole,
-  barbershopId?: string
+  role?: UserRole
 }
 
 export interface userLoginDTO extends Pick<userCreateDTO, "email" | "password"> { }

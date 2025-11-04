@@ -8,7 +8,6 @@ export const UserCreateSchema = {
     password: { type: "string", minLength: 8 },
     name: { type: "string" },
     role: { type: "string", enum: Object.values(UserRole) },
-    barbershopId: { type: "string" },
   },
 } as const;
 
