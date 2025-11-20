@@ -5,13 +5,14 @@ import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import * as crypto from "crypto";
 import * as nodemailer from "nodemailer";
-import { Barbershop } from "../entity/Barbershop";
+import { Repository } from "typeorm";
+
+
 
 export class UserService {
-  private userRepo = AppDataSource.getRepository(User);
-  private barbershopRepo = AppDataSource.getRepository(Barbershop);
+  private userRepo: Repository<User> = AppDataSource.getRepository(User);
 
-  async userCreate(data: userCreateDTO): Promise<User> {
+  async userCreate(data: userCreateDTO): Promise<Pick<User, "name" | "email">> {
     const { name, email, password, role } = data;
 
     const existingEmail = await this.userRepo.findOneBy({ email });
@@ -21,10 +22,13 @@ export class UserService {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const user = this.userRepo.create({ name, email, passwordHash, role });
+    const user: User = this.userRepo.create({ name, email, passwordHash, role });
     await this.userRepo.save(user);
 
-    return user
+    return {
+      name: user.name,
+      email: user.email
+    } satisfies Pick<User, "name" | "email">;
   }
 
   async userLogin(data: userLoginDTO): Promise<string> {
@@ -40,9 +44,16 @@ export class UserService {
       throw { status: 404, message: "Invalid credentials" };
     }
 
-    const payload = {
-      id: user.id,
-      name: user.name
+    interface jwtPayload {
+      id: string;
+      name: string;
+      role: string
+    }
+
+    const payload: jwtPayload = { id: user.id, name: user.name, role: user.role };
+
+    if (!process.env.SECRET_KEY) {
+      throw new Error("SECRET_KEY missing");
     }
 
     const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });

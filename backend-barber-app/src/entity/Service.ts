@@ -5,14 +5,14 @@ import { Appointment } from "./Appointment";
 export class Service {
   @PrimaryGeneratedColumn("uuid")
 
-  id: string;
+  id!: string;
 
   @Column({ type: "varchar", length: 255 })
-  name: string;
+  name!: string;
 
   @Column({ type: "decimal", precision: 10, scale: 2 })
-  price: number;
+  price!: number;
 
   @OneToMany(() => Appointment, appointment => appointment.service)
-  appointments: Appointment[];
+  appointments!: Appointment[];
 }

@@ -18,46 +18,46 @@ export enum JoinRequestStatus {
 @Entity("users")
 export class User {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
 
   @Column({ type: "varchar", length: 255 })
-  name: string;
+  name!: string;
 
   @Column({ type: "varchar", length: 255, unique: true })
-  email: string;
+  email!: string;
 
   @Column({ type: "varchar", length: 255 })
-  passwordHash: string;
+  passwordHash!: string;
 
   @Column({ type: "varchar", length: 255, nullable: true })
-  resetToken: string | null;
+  resetToken!: string | null;
 
   @Column({ type: "timestamp", nullable: true })
-  expiresAt: Date | null;
+  expiresAt!: Date | null;
 
   @Column({
     type: "enum",
     enum: UserRole,
     default: UserRole.CUSTOMER,
   })
-  role: UserRole;
+  role!: UserRole;
 
   @Column({
     type: "enum",
     enum: JoinRequestStatus,
     nullable: true,
   })
-  joinRequestStatus: JoinRequestStatus | null;
+  joinRequestStatus!: JoinRequestStatus | null;
 
   @ManyToOne(() => Barbershop, { nullable: true })
-  requestedBarbershop: Barbershop | null;
+  requestedBarbershop!: Barbershop | null;
 
   @ManyToOne(() => Barbershop, barbershop => barbershop.barbers, { nullable: true })
-  barbershop: Barbershop | null;
+  barbershop!: Barbershop | null;
 
   @OneToMany(() => Appointment, appointment => appointment.user)
-  appointments: Appointment[];
+  appointments!: Appointment[];
 
   @OneToMany(() => Client, client => client.barber)
-  clients: Client[];
+  clients!: Client[];
 }

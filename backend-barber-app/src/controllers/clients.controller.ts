@@ -20,8 +20,10 @@ export class clientController {
       await clientService.createClient(req.body as createClientDTO, barberId);
       return res.status(201).send({ message: "Client created successfully." });
     } catch (err) {
-      const status = err.status || 400;
-      return res.status(status).send({ error: err.message });
+      if (err && typeof err === "object" && "status" in err && "message" in err) {
+        const status = (err as any).status || 400;
+        return res.status(status).send({ error: (err as any).message });
+      }
     }
   }
 }

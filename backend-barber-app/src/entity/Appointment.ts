@@ -12,27 +12,27 @@ export enum AppointmentStatus {
 @Entity("appointments")
 export class Appointment {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
 
   @ManyToOne(() => Client, { nullable: true })
-  client: Client | null;
+  client!: Client | null;
 
   @ManyToOne(() => User, user => user.appointments, { nullable: true })
-  user: User | null;
+  user!: User | null;
 
   @ManyToOne(() => Service, service => service.appointments)
-  service: Service;
+  service!: Service;
 
   @Column({ type: "timestamp" })
-  startTime: Date;
+  startTime!: Date;
 
   @Column({ type: "timestamp" })
-  endTime: Date;
+  endTime!: Date;
 
   @Column({
     type: "enum",
     enum: AppointmentStatus,
     default: AppointmentStatus.SCHEDULED,
   })
-  status: AppointmentStatus;
+  status!: AppointmentStatus;
 }

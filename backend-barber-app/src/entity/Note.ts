@@ -5,17 +5,17 @@ import { Client } from "./Client";
 export class Note {
   @PrimaryGeneratedColumn("uuid")
 
-  id: string;
+  id!: string;
 
   @Column({ type: "text" })
-  note: string;
+  note!: string;
 
   @ManyToOne(() => Client, { nullable: true })
-  client: Client;
+  client!: Client;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

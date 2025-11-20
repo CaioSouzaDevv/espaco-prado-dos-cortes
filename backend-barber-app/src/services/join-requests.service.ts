@@ -7,7 +7,7 @@ export class JoinRequestService {
   private userRepo = AppDataSource.getRepository(User);
   private barbershopRepo = AppDataSource.getRepository(Barbershop);
 
-  async createJoinRequest(userId: string, params: CreateJoinRequestParamsDTO): Promise<User> {
+  async createJoinRequest(userId: string, params: CreateJoinRequestParamsDTO): Promise<Pick<User, "name" | "email">> {
     const { barbershopId } = params;
 
     const user = await this.userRepo.findOneBy({ id: userId });
@@ -37,10 +37,13 @@ export class JoinRequestService {
 
     await this.userRepo.save(user);
 
-    return user;
+    return {
+      name: user.name,
+      email: user.email
+    } satisfies Pick<User, "name" | "email">;
   }
 
-  async getJoinRequests(userId: string, barbershopId: string): Promise<User[]> {
+  async getJoinRequests(userId: string, barbershopId: string): Promise<Pick<User, "name" | "email" | "role">[]> {
     const admin = await this.userRepo.findOne({ where: { id: userId }, relations: ["barbershop"] });
     if (!admin || admin.role !== UserRole.ADMIN || admin.barbershop?.id !== barbershopId) {
       throw { status: 403, message: "You are not authorized to view join requests for this barbershop" };
@@ -53,10 +56,14 @@ export class JoinRequestService {
       },
     });
 
-    return requests;
+    return requests.map(request => ({
+      name: request.name,
+      email: request.email,
+      role: request.role
+    } satisfies Pick<User, "name" | "email" | "role">));
   }
 
-  async updateJoinRequest(adminId: string, params: UpdateJoinRequestParamsDTO, body: UpdateJoinRequestBodyDTO): Promise<User> {
+  async updateJoinRequest(adminId: string, params: UpdateJoinRequestParamsDTO, body: UpdateJoinRequestBodyDTO): Promise<Pick<User, "name" | "email">> {
     const { barbershopId, userId } = params;
     const { action } = body;
 
@@ -85,6 +92,9 @@ export class JoinRequestService {
 
     await this.userRepo.save(user);
 
-    return user;
+    return {
+      name: user.name,
+      email: user.email
+    } satisfies Pick<User, "name" | "email">;
   }
 }

@@ -8,10 +8,12 @@ export class UserController {
   static async userCreate(req: FastifyRequest<{ Body: userCreateDTO }>, res: FastifyReply) {
     try {
       const user = await userService.userCreate(req.body);
-      return res.status(201).send({ user });
+      return res.status(200).send({ user });
     } catch (err) {
-      const status = err.status || 400;
-      return res.status(status).send({ error: err.message });
+      if (err && typeof err === "object" && "status" in err && "message" in err) {
+        const status = (err as any).status || 400;
+        return res.status(status).send({ error: (err as any).message });
+      }
     }
   }
 
@@ -20,8 +22,10 @@ export class UserController {
       const token = await userService.userLogin(req.body);
       return res.status(200).send({ token })
     } catch (err) {
-      const status = err.status || 400;
-      return res.status(status).send({ error: err.message });
+      if (err && typeof err === "object" && "status" in err && "message" in err) {
+        const status = (err as any).status || 400;
+        return res.status(status).send({ error: (err as any).message });
+      }
     }
   }
 
@@ -30,8 +34,10 @@ export class UserController {
       await userService.forgotPassword(req.body);
       return res.status(200).send({ message: "If an account with this email exists, a password reset link will be sent." })
     } catch (err) {
-      const status = err.status || 400;
-      return res.status(status).send({ error: err.message });
+      if (err && typeof err === "object" && "status" in err && "message" in err) {
+        const status = (err as any).status || 400;
+        return res.status(status).send({ error: (err as any).message });
+      }
     }
   }
 
@@ -40,8 +46,10 @@ export class UserController {
       await userService.resetPassword(req.params, req.body);
       return res.status(200).send({ message: "Your password has been reset successfully." })
     } catch (err) {
-      const status = err.status || 400;
-      return res.status(status).send({ error: err.message });
+      if (err && typeof err === "object" && "status" in err && "message" in err) {
+        const status = (err as any).status || 400;
+        return res.status(status).send({ error: (err as any).message });
+      }
     }
   }
 }

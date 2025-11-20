@@ -15,8 +15,13 @@ export function authMiddleware(req: FastifyRequest, res: FastifyReply, done: Hoo
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.SECRET_KEY) as { id: string; name: string };
-    req.user = { id: decoded.id, name: decoded.name };
+
+    if (!process.env.SECRET_KEY) {
+      throw new Error("SECRET_KEY missing");
+    }
+
+    const decoded = jwt.verify(token, process.env.SECRET_KEY) as { id: string; name: string, role: string };
+    req.user = { id: decoded.id, name: decoded.name, role: decoded.role };
     done();
   } catch (err) {
     return res.status(401).send({ error: "Invalid token" });
